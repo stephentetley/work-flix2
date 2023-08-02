@@ -16,11 +16,32 @@
 
 mod Rules1 {
 
-    pub def dispIsDel(): #{ Equipment(Int32, String, String, String), CheckError(String, Int32, String)} = #{
+
+    pub def doubleWhitespace(): #{Equipment(Int32, String, String, String), CheckError(String, Int32, String)} = #{
+        // No double (or more) whitespace
+        CheckError("Equipment with extraneus whitespace", equiId, name) :-
+            Equipment(equiId, name, _, _),
+            if Regex.isSubmatch(regex"\\p{Space}{2,}", name).
+    }
+
+
+    pub def dispIsDel(): #{Equipment(Int32, String, String, String), CheckError(String, Int32, String)} = #{
         // Names of deleted equipment should end in ` (Del)`.
         CheckError("Equipment with Status=DISP does not have a (DEL) suffix", equiId, name) :-
             Equipment(equiId, name, "DISP", _),
             if not Regex.endsWith(suffix = regex"(?i)\\(Del\\)", name).
+    }
+
+    pub def equiOperBelowDel(): #{Equipment(Int32, String, String, String), CheckError(String, Int32, String), SubEquipment(Int32, Int32), IsInactive(Int32)} = #{
+        // If parent is "DEL" / "DISP", no child should be "OPER".
+        CheckError("Equipment with Status=DISP has OPER subequipment", parentId, name) :-
+            Equipment(parentId, name, _, _),
+            IsInactive(parentId),
+            SubEquipment(parentId, childId),
+            Equipment(childId, _, "OPER", _).
+
+        IsInactive(equiId) :- Equipment(equiId, _, "DEL", _). 
+        IsInactive(equiId) :- Equipment(equiId, _, "DISP", _). 
     }
 
 }
