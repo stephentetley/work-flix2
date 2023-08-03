@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-mod Rules1 {
+mod WF.Checkers.Rules1 {
 
 
     pub def doubleWhitespace(): #{Equipment(Int32, String, String, String), CheckError(String, Int32, String)} = #{
