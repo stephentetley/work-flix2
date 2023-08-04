@@ -16,6 +16,7 @@
 
 mod WF.Checkers.Rules1 {
 
+    // Equipment(equiId = Int32, name = String, Floc = String, status = String)
 
     pub def doubleWhitespace(): #{Equipment(Int32, String, String, String), CheckError(String, Int32, String)} = #{
         // No double (or more) whitespace
@@ -28,7 +29,7 @@ mod WF.Checkers.Rules1 {
     pub def dispIsDel(): #{Equipment(Int32, String, String, String), CheckError(String, Int32, String)} = #{
         // Names of deleted equipment should end in ` (Del)`.
         CheckError("Equipment with Status=DISP does not have a (DEL) suffix", equiId, name) :-
-            Equipment(equiId, name, "DISP", _),
+            Equipment(equiId, name, _, "DISP"),
             if not Regex.endsWith(suffix = regex"(?i)\\(Del\\)", name).
     }
 
@@ -38,10 +39,10 @@ mod WF.Checkers.Rules1 {
             Equipment(parentId, name, _, _),
             IsInactive(parentId),
             SubEquipment(parentId, childId),
-            Equipment(childId, _, "OPER", _).
+            Equipment(childId, _, _, "OPER").
 
-        IsInactive(equiId) :- Equipment(equiId, _, "DEL", _). 
-        IsInactive(equiId) :- Equipment(equiId, _, "DISP", _). 
+        IsInactive(equiId) :- Equipment(equiId, _, _, "DEL"). 
+        IsInactive(equiId) :- Equipment(equiId, _, _, "DISP"). 
     }
 
 }
