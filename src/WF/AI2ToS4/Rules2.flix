@@ -35,11 +35,83 @@ mod WF.AI2ToS4.Rules2 {
                             EquiMapping(String, Int32), 
                             AiParent(String, String),
                             AiGridRef(String, String)} = #{
-        IntValuaEqui(equiId, "Northing", WF.Base.Osgb36.northingfromOsgb36(gridref)) :- 
+        IntValuaEqui(equiId, "NORTHING", WF.Base.Osgb36.northingfromOsgb36(gridref)) :- 
             Equipment(equiId, _, _, _),
             EquiMapping(plinum, equiId),
             AiParent(plinum, sainum),
             AiGridRef(sainum, gridref).
+    }
+
+    pub def conditionGrade(): #{StringValuaEqui(Int32, String, String), 
+                                Equipment(Int32, String, String, String),
+                                EquiMapping(String, Int32), 
+                                AibStringValue(String, String, String),
+                                ConditionGrade(String, String)
+                                } = #{
+        StringValuaEqui(equiId, "CONDITION_GRADE", s4Grade) :- 
+            Equipment(equiId, _, _, _),
+            EquiMapping(plinum, equiId),
+            AibStringValue("Condition Grade", plinum, aibval),
+            ConditionGrade(aibval, s4Grade).
+
+        ConditionGrade("1 - Good",      "1 - GOOD").
+        ConditionGrade("2 - Fair",      "2 - FAIR").
+        ConditionGrade("3 - Adequate",  "3 - ADEQUATE").
+        ConditionGrade("4 - Poor",      "4 - POOR").
+        ConditionGrade("5 - Awful",     "5 - AWFUL").
+    
+        StringValuaEqui(equiId, "CONDITION_GRADE_REASON", String.toUpperCase(reason)) :- 
+            Equipment(equiId, _, _, _),
+            EquiMapping(plinum, equiId),
+            AibStringValue("Condition Grade Reason", plinum, reason).
+    }
+
+    pub def loadingFactor(): #{StringValuaEqui(Int32, String, String), 
+                                Equipment(Int32, String, String, String),
+                                EquiMapping(String, Int32), 
+                                AibStringValue(String, String, String),
+                                LoadingFactor(String, String)
+                                } = #{
+        StringValuaEqui(equiId, "LOADING_FACTOR", s4Loading) :- 
+            Equipment(equiId, _, _, _),
+            EquiMapping(plinum, equiId),
+            AibStringValue("Loading Factor", plinum, aibval),
+            LoadingFactor(aibval, s4Loading).
+
+        LoadingFactor("1 - Significantly Under Loaded",     "1 - SIGNIFICANTLY UNDER LOADED").
+        LoadingFactor("2 - Under Loaded",                   "2 - UNDER LOADED").
+        LoadingFactor("3 - Satisfactory",                   "3 - SATISFACTORY").
+        LoadingFactor("4 - Overloaded",                     "4 - OVERLOADED").
+        LoadingFactor("5 - Unacceptable",                   "5 - UNACCEPTABLE").
+
+        StringValuaEqui(equiId, "LOADING_FACTOR_REASON", String.toUpperCase(reason)) :- 
+            Equipment(equiId, _, _, _),
+            EquiMapping(plinum, equiId),
+            AibStringValue("Loading Factor Reason", plinum, reason).
+    }
+
+    pub def performanceGrade(): #{StringValuaEqui(Int32, String, String), 
+                                Equipment(Int32, String, String, String),
+                                EquiMapping(String, Int32), 
+                                AibStringValue(String, String, String),
+                                PerformanceGrade(String, String)
+                                } = #{
+        StringValuaEqui(equiId, "PERFORMANCE_GRADE", s4Grade) :- 
+            Equipment(equiId, _, _, _),
+            EquiMapping(plinum, equiId),
+            AibStringValue("Performance Grade", plinum, aibval),
+            PerformanceGrade(aibval, s4Grade).
+
+        PerformanceGrade("1 - Availability  95%",       "1 - AVAILABILITY 95%").
+        PerformanceGrade("2 - Availability 90% - 94%",  "2 - AVAILABILITY 90% - 94%").
+        PerformanceGrade("3 - Availability 80% - 89%",  "3 - AVAILABILITY 80% - 89%").
+        PerformanceGrade("4 - Availability 50% - 79%",  "4 - AVAILABILITY 50% - 79%").
+        PerformanceGrade("5 - Availability  49%",       "5 - AVAILABILITY 49%").
+
+        StringValuaEqui(equiId, "PERFORMANCE_GRADE_REASON", String.toUpperCase(reason)) :- 
+            Equipment(equiId, _, _, _),
+            EquiMapping(plinum, equiId),
+            AibStringValue("Performance Grade Reason", plinum, reason).
     }
 
 }
