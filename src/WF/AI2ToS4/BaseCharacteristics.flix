@@ -14,33 +14,35 @@
  *  limitations under the License.
  */
 
-mod WF.AI2ToS4.Rules2 {
+mod WF.AI2ToS4.BaseCharacteristics {
 
     // Equipment(equiId = Int32, name = String, Floc = String, status = String)
 
     pub def easting(): #{IntValuaEqui(Int32, String, Int32), 
                             Equipment(Int32, String, String, String),
                             EquiMapping(String, Int32), 
-                            AiParent(String, String),
-                            AiGridRef(String, String)} = #{
+                            AibParent(String, String),
+                            AibStringValue(String, String, String)} = #{
         IntValuaEqui(equiId, "EASTING", WF.Base.Osgb36.eastingfromOsgb36(gridref)) :- 
             Equipment(equiId, _, _, _),
             EquiMapping(plinum, equiId),
-            AiParent(plinum, sainum),
-            AiGridRef(sainum, gridref).
+            AibParent(plinum, sainum),
+            AibStringValue("Loc.Ref.", sainum, gridref).
     }
 
     pub def northing(): #{IntValuaEqui(Int32, String, Int32), 
                             Equipment(Int32, String, String, String),
                             EquiMapping(String, Int32), 
-                            AiParent(String, String),
-                            AiGridRef(String, String)} = #{
+                            AibParent(String, String),
+                            AibStringValue(String, String, String)} = #{
         IntValuaEqui(equiId, "NORTHING", WF.Base.Osgb36.northingfromOsgb36(gridref)) :- 
             Equipment(equiId, _, _, _),
             EquiMapping(plinum, equiId),
-            AiParent(plinum, sainum),
-            AiGridRef(sainum, gridref).
+            AibParent(plinum, sainum),
+            AibStringValue("Loc.Ref.", sainum, gridref).
     }
+
+
 
     pub def conditionGrade(): #{StringValuaEqui(Int32, String, String), 
                                 Equipment(Int32, String, String, String),
@@ -112,6 +114,31 @@ mod WF.AI2ToS4.Rules2 {
             Equipment(equiId, _, _, _),
             EquiMapping(plinum, equiId),
             AibStringValue("Performance Grade Reason", plinum, reason).
+    }
+
+    pub def surveyDate(): #{IntValuaEqui(Int32, String, Int32), 
+                            Equipment(Int32, String, String, String),
+                            EquiMapping(String, Int32), 
+                            AibIntValue(String, String, Int32)} = #{
+        /// NOTE in Aib this is called "SURVEY_YEAR"
+        IntValuaEqui(equiId, "SURVEY_DATE", year) :- 
+            Equipment(equiId, _, _, _),
+            EquiMapping(plinum, equiId),
+            AibIntValue("Survey Year", plinum, year).
+    }
+
+    pub def aibReference(): #{StringValuaEqui(Int32, String, Int32), 
+                            Equipment(Int32, String, String, String),
+                            EquiMapping(String, Int32), 
+                            AibParent(String, String)} = #{
+        StringValuaEqui(equiId, "AI2_AIB_REFERENCE", plinum) :- 
+            Equipment(equiId, _, _, _),
+            EquiMapping(plinum, equiId).
+
+        StringValuaEqui(equiId, "AI2_AIB_REFERENCE", sainum) :- 
+            Equipment(equiId, _, _, _),
+            EquiMapping(plinum, equiId),
+            AibParent(plinum, sainum).
     }
 
 }
