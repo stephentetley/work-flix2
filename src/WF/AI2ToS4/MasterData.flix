@@ -18,6 +18,29 @@ mod WF.AI2ToS4.MasterData {
 
     // S4Equipment(equiId = Int32, name = String, Floc = String, status = String)
 
+    pub def manuf(): #{StringValuaEqui(Int32, String, String), 
+                            S4Equipment(Int32, String, String, String),
+                            EquiMapping(String, Int32),
+                            AibStringValue(String, String, String)
+                            } = #{
+
+        StringValuaEqui(equiId, "Manufacturer", aibvalue) :- 
+            S4Equipment(equiId, _, _, _),
+            EquiMapping(plinum, equiId),
+            AibStringValue(plinum, "Manufacturer", aibvalue).
+
+        StringValuaEqui(equiId, "Model Number", aibvalue) :- 
+            S4Equipment(equiId, _, _, _),
+            EquiMapping(plinum, equiId),
+            AibStringValue(plinum, "Model", aibvalue).
+
+        StringValuaEqui(equiId, "Serial Number", aibvalue) :- 
+            S4Equipment(equiId, _, _, _),
+            EquiMapping(plinum, equiId),
+            AibStringValue(plinum, "Serial Number", aibvalue).
+
+
+    }
 
     pub def userStatus(): #{StringValuaEqui(Int32, String, String), 
                             S4Equipment(Int32, String, String, String),
@@ -40,16 +63,27 @@ mod WF.AI2ToS4.MasterData {
 
     // Start-up date - todo use flix-time...
 
-    pub def startupDate(): #{DateValuaEqui(Int32, String, Time.LocalDate), 
+    pub def dateInfo(): #{IntValuaEqui(Int32, String, Int32),
+                            DateValuaEqui(Int32, String, Time.LocalDate), 
                             S4Equipment(Int32, String, String, String),
                             EquiMapping(String, Int32),
                             AibDateTimeValue(String, String, Time.LocalDateTime)} = #{
+        
         DateValuaEqui(equiId, "Start-up date", Time.LocalDateTime.toLocalDate(value)) :- 
             S4Equipment(equiId, _, _, _),
             EquiMapping(plinum, equiId),
             AibDateTimeValue(plinum, "Installed From", value).
+        
+        IntValuaEqui(equiId, "Construction_year", Time.LocalDateTime.getYear(value)) :- 
+            S4Equipment(equiId, _, _, _),
+            EquiMapping(plinum, equiId),
+            AibDateTimeValue(plinum, "Installed From", value).
 
-        /// Construction_month, Construction_year
+        IntValuaEqui(equiId, "Construction_month", Time.LocalDateTime.getMonth(value) |> Time.Month.getValue) :- 
+            S4Equipment(equiId, _, _, _),
+            EquiMapping(plinum, equiId),
+            AibDateTimeValue(plinum, "Installed From", value).
+
 
     }        
 }
