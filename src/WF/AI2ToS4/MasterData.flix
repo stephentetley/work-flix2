@@ -16,18 +16,18 @@
 
 mod WF.AI2ToS4.MasterData {
 
-    // Equipment(equiId = Int32, name = String, Floc = String, status = String)
+    // S4Equipment(equiId = Int32, name = String, Floc = String, status = String)
 
 
-    pub def userStatus(): #{IntValuaEqui(Int32, String, Int32), 
-                            Equipment(Int32, String, String, String),
+    pub def userStatus(): #{StringValuaEqui(Int32, String, String), 
+                            S4Equipment(Int32, String, String, String),
                             EquiMapping(String, Int32),
                             AibStringValue(String, String, String), 
                             UserStatus(String, String)} = #{
-        IntValuaEqui(equiId, "User status", s4Status) :- 
-            Equipment(equiId, _, _, _),
+        StringValuaEqui(equiId, "User status", s4Status) :- 
+            S4Equipment(equiId, _, _, _),
             EquiMapping(plinum, equiId),
-            AibStringValue("AssetStatus", plinum, aibvalue),
+            AibStringValue(plinum, "AssetStatus", aibvalue),
             UserStatus(aibvalue, s4Status).
 
         UserStatus("DECOMMISSIONED",        "DCOM").
@@ -40,14 +40,16 @@ mod WF.AI2ToS4.MasterData {
 
     // Start-up date - todo use flix-time...
 
-    pub def startupDate(): #{DateValuaEqui(Int32, String, String), 
-                            Equipment(Int32, String, String, String),
+    pub def startupDate(): #{DateValuaEqui(Int32, String, Time.LocalDate), 
+                            S4Equipment(Int32, String, String, String),
                             EquiMapping(String, Int32),
-                            AibDateTimeValue(String, String, String)} = #{
-        IntValuaEqui(equiId, "Start-up date", value) :- 
-            Equipment(equiId, _, _, _),
+                            AibDateTimeValue(String, String, Time.LocalDateTime)} = #{
+        DateValuaEqui(equiId, "Start-up date", Time.LocalDateTime.toLocalDate(value)) :- 
+            S4Equipment(equiId, _, _, _),
             EquiMapping(plinum, equiId),
-            AibDateTimeValue("Installed From", plinum, value).
+            AibDateTimeValue(plinum, "Installed From", value).
 
         /// Construction_month, Construction_year
+
+    }        
 }

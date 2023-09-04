@@ -1,0 +1,12 @@
+[package]
+name        = "work-flix2"
+description = "Code for work related projects."
+version     = "0.1.0"
+flix        = "0.39.0"
+license     = "Apache-2.0"
+authors     = ["Stephen Tetley <stephen.tetley@gmail.com>"]
+
+[dependencies]
+"github:stephentetley/charset-locale"           = "0.1.0"
+"github:stephentetley/flix-time"                = "0.7.0"
+
