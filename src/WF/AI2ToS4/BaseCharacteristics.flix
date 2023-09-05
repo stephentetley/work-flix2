@@ -18,9 +18,9 @@ mod WF.AI2ToS4.BaseCharacteristics {
 
     // Equipment(equiId = Int32, name = String, Floc = String, status = String)
 
-    pub def easting(): #{IntValuaEqui(Int32, String, Int32), 
-                            S4Equipment(Int32, String, String, String),
-                            EquiMapping(String, Int32), 
+    pub def easting(): #{IntValuaEqui(String, String, Int32), 
+                            S4Equipment(String, String, String, String),
+                            EquiMapping(String, String), 
                             AibParent(String, String),
                             AibStringValue(String, String, String)} = #{
         IntValuaEqui(equiId, "EASTING", WF.Base.Osgb36.eastingfromOsgb36(gridref)) :- 
@@ -30,9 +30,9 @@ mod WF.AI2ToS4.BaseCharacteristics {
             AibStringValue("Loc.Ref.", sainum, gridref).
     }
 
-    pub def northing(): #{IntValuaEqui(Int32, String, Int32), 
-                            S4Equipment(Int32, String, String, String),
-                            EquiMapping(String, Int32), 
+    pub def northing(): #{IntValuaEqui(String, String, Int32), 
+                            S4Equipment(String, String, String, String),
+                            EquiMapping(String, String), 
                             AibParent(String, String),
                             AibStringValue(String, String, String)} = #{
         IntValuaEqui(equiId, "NORTHING", WF.Base.Osgb36.northingfromOsgb36(gridref)) :- 
@@ -44,9 +44,9 @@ mod WF.AI2ToS4.BaseCharacteristics {
 
 
 
-    pub def conditionGrade(): #{StringValuaEqui(Int32, String, String), 
-                                S4Equipment(Int32, String, String, String),
-                                EquiMapping(String, Int32), 
+    pub def conditionGrade(): #{StringValuaEqui(String, String, String), 
+                                S4Equipment(String, String, String, String),
+                                EquiMapping(String, String), 
                                 AibStringValue(String, String, String),
                                 ConditionGrade(String, String)
                                 } = #{
@@ -68,9 +68,9 @@ mod WF.AI2ToS4.BaseCharacteristics {
             AibStringValue("Condition Grade Reason", plinum, reason).
     }
 
-    pub def loadingFactor(): #{StringValuaEqui(Int32, String, String), 
-                                S4Equipment(Int32, String, String, String),
-                                EquiMapping(String, Int32), 
+    pub def loadingFactor(): #{StringValuaEqui(String, String, String), 
+                                S4Equipment(String, String, String, String),
+                                EquiMapping(String, String), 
                                 AibStringValue(String, String, String),
                                 LoadingFactor(String, String)
                                 } = #{
@@ -92,9 +92,9 @@ mod WF.AI2ToS4.BaseCharacteristics {
             AibStringValue("Loading Factor Reason", plinum, reason).
     }
 
-    pub def performanceGrade(): #{StringValuaEqui(Int32, String, String), 
-                                S4Equipment(Int32, String, String, String),
-                                EquiMapping(String, Int32), 
+    pub def performanceGrade(): #{StringValuaEqui(String, String, String), 
+                                S4Equipment(String, String, String, String),
+                                EquiMapping(String, String), 
                                 AibStringValue(String, String, String),
                                 PerformanceGrade(String, String)
                                 } = #{
@@ -116,9 +116,9 @@ mod WF.AI2ToS4.BaseCharacteristics {
             AibStringValue("Performance Grade Reason", plinum, reason).
     }
 
-    pub def surveyDate(): #{IntValuaEqui(Int32, String, Int32), 
-                            S4Equipment(Int32, String, String, String),
-                            EquiMapping(String, Int32), 
+    pub def surveyDate(): #{IntValuaEqui(String, String, Int32), 
+                            S4Equipment(String, String, String, String),
+                            EquiMapping(String, String), 
                             AibIntValue(String, String, Int32)} = #{
         /// NOTE in Aib this is called "SURVEY_YEAR"
         IntValuaEqui(equiId, "SURVEY_DATE", year) :- 
@@ -127,9 +127,9 @@ mod WF.AI2ToS4.BaseCharacteristics {
             AibIntValue("Survey Year", plinum, year).
     }
 
-    pub def aibReference(): #{StringValuaEqui(Int32, String, String), 
-                            S4Equipment(Int32, String, String, String),
-                            EquiMapping(String, Int32), 
+    pub def aibReference(): #{StringValuaEqui(String, String, String), 
+                            S4Equipment(String, String, String, String),
+                            EquiMapping(String, String), 
                             AibParent(String, String)} = #{
         StringValuaEqui(equiId, "AI2_AIB_REFERENCE", plinum) :- 
             S4Equipment(equiId, _, _, _),
