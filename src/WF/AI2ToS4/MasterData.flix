@@ -16,11 +16,11 @@
 
 mod WF.AI2ToS4.MasterData {
 
-    // S4Equipment(equiId = Int32, name = String, Floc = String, status = String)
+    // S4Equipment(equiId = String, name = String, Floc = String, status = String)
 
-    pub def masterData(): #{StringValuaEqui(String, String, String), 
-                            IntValuaEqui(String, String, Int32),
-                            DateValuaEqui(String, String, Time.LocalDate), 
+    pub def masterData(): #{ValuaEquiString(String, String, String), 
+                            ValuaEquiInt(String, String, Int32),
+                            ValuaEquiDate(String, String, Time.LocalDate), 
                             S4Equipment(String, String, String, String),
                             EquiMapping(String, String),
                             AibStringValue(String, String, String),
@@ -28,39 +28,39 @@ mod WF.AI2ToS4.MasterData {
                             UserStatus(String, String)
                             } = #{
 
-        StringValuaEqui(equiId, "HERST", aibvalue) :- 
+        ValuaEquiString(equiId, "HERST", aibvalue) :- 
             S4Equipment(equiId, _, _, _),
             EquiMapping(plinum, equiId),
             AibStringValue(plinum, "Manufacturer", aibvalue).
 
-        StringValuaEqui(equiId, "TYPBZ", aibvalue) :- 
+        ValuaEquiString(equiId, "TYPBZ", aibvalue) :- 
             S4Equipment(equiId, _, _, _),
             EquiMapping(plinum, equiId),
             AibStringValue(plinum, "Model Name", aibvalue).
 
-        StringValuaEqui(equiId, "MAPA_EEQZ", aibvalue) :- 
+        ValuaEquiString(equiId, "MAPA_EEQZ", aibvalue) :- 
             S4Equipment(equiId, _, _, _),
             EquiMapping(plinum, equiId),
             AibStringValue(plinum, "Specific Model/Frame", aibvalue).
 
-        StringValuaEqui(equiId, "SERGE", aibvalue) :- 
+        ValuaEquiString(equiId, "SERGE", aibvalue) :- 
             S4Equipment(equiId, _, _, _),
             EquiMapping(plinum, equiId),
             AibStringValue(plinum, "Serial No", aibvalue).
 
 
-        StringValuaEqui(equiId, "TIDN_EEQZ", aibvalue) :- 
+        ValuaEquiString(equiId, "TIDN_EEQZ", aibvalue) :- 
             S4Equipment(equiId, _, _, _),
             EquiMapping(plinum, equiId),
             AibStringValue(plinum, "P AND I Tag No", aibvalue).
     
-        StringValuaEqui(equiId, "USTA_EQUI", s4Status) :- 
+        ValuaEquiString(equiId, "USTA_EQUI", s4Status) :- 
             S4Equipment(equiId, _, _, _),
             EquiMapping(plinum, equiId),
             AibStringValue(plinum, "Asset Status", aibvalue),
             UserStatus(aibvalue, s4Status).
 
-        StringValuaEqui(equiId, "USTW_EQUI", s4Status) :- 
+        ValuaEquiString(equiId, "USTW_EQUI", s4Status) :- 
             S4Equipment(equiId, _, _, _),
             EquiMapping(plinum, equiId),
             AibStringValue(plinum, "Asset Status", aibvalue),
@@ -72,21 +72,22 @@ mod WF.AI2ToS4.MasterData {
         UserStatus("OPERATIONAL",           "OPER").
         UserStatus("TO BE CONSTRUCTED",     "UCON").
 
-        DateValuaEqui(equiId, "INBT", Time.LocalDateTime.toLocalDate(value)) :- 
+        /// Startup Date
+        ValuaEquiDate(equiId, "INBT", Time.LocalDateTime.toLocalDate(value)) :- 
             S4Equipment(equiId, _, _, _),
             EquiMapping(plinum, equiId),
             AibDateTimeValue(plinum, "Installed From Date", value).
         
-        IntValuaEqui(equiId, "BAUJJ", Time.LocalDateTime.getYear(value)) :- 
+        ValuaEquiInt(equiId, "BAUJJ", Time.LocalDateTime.getYear(value)) :- 
             S4Equipment(equiId, _, _, _),
             EquiMapping(plinum, equiId),
             AibDateTimeValue(plinum, "Installed From Date", value).
 
-        IntValuaEqui(equiId, "BAUMM_EQI", Time.LocalDateTime.getMonth(value) |> Time.Month.getValue) :- 
+        ValuaEquiInt(equiId, "BAUMM_EQI", Time.LocalDateTime.getMonth(value) |> Time.Month.getValue) :- 
             S4Equipment(equiId, _, _, _),
             EquiMapping(plinum, equiId),
             AibDateTimeValue(plinum, "Installed From Date", value).
-
 
     }        
+
 }
