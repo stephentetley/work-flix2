@@ -16,12 +16,12 @@
 
 mod WF.AI2ToS4.Characteristics.LSTN {
 
-    // S4Equipment(equiId = String, name = String, Floc = String, status = String)
+    // S4Equipment(equiId = String, name = String, objType = String, classType = String, floc = String, status = String)
 
 
     pub def lstnut(): #{ValuaEquiString(String, String, String), 
                             ValuaEquiDecimal(String, String, Float64), 
-                            S4Equipment(String, String, String, String),
+                            S4Equipment(String, String, String, String, String, String),
                             EquiMapping(String, String), 
                             AibStringValue(String, String, String), 
                             AibIntValue(String, String, Int32),
@@ -34,33 +34,33 @@ mod WF.AI2ToS4.Characteristics.LSTN {
                             } = #{
         
         ValuaEquiString(equiId, "LOCATION_ON_SITE", value) :- 
-            S4Equipment(equiId, _, _, _),
+            S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
             AibStringValue("Location On Site", plinum, value).
 
         ValuaEquiString(equiId, "LSTN_TRANSDUCER_MODEL", value) :- 
-            S4Equipment(equiId, _, _, _),
+            S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
             AibStringValue("Transducer Type", plinum, value).
 
         ValuaEquiString(equiId, "LSTN_TRANSDUCER_SERIAL_NO", value) :- 
-            S4Equipment(equiId, _, _, _),
+            S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
             AibStringValue("Transducer Serial No", plinum, value).
 
         ValuaEquiDecimal(equiId, "LSTN_RANGE_MIN", value) :- 
-            S4Equipment(equiId, _, _, _),
+            S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
             AibDecimalValue("Range min", plinum, value).
 
         ValuaEquiDecimal(equiId, "LSTN_RANGE_MAX", value) :- 
-            S4Equipment(equiId, _, _, _),
+            S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
             AibDecimalValue("Range max", plinum, value).            
 
 
         ValuaEquiString(equiId, "LSTN_RANGE_UNITS", s4Units) :- 
-            S4Equipment(equiId, _, _, _),
+            S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
             AibStringValue("Range unit", plinum, aibval),
             RangeUnits(aibval, s4Units).
@@ -71,7 +71,7 @@ mod WF.AI2ToS4.Characteristics.LSTN {
 
         /// TODO "Signal min" / "Signal max" might not be ints
         ValuaEquiString(equiId, "LSTN_SIGNAL_TYPE", signalType) :- 
-            S4Equipment(equiId, _, _, _),
+            S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
             AibIntValue("Signal min", plinum, aibmin),
             AibIntValue("Signal max", plinum, aibmax),
@@ -84,7 +84,7 @@ mod WF.AI2ToS4.Characteristics.LSTN {
 
         ValuaEquiString(equiId, s4RelayFunction, value) :- 
             RelayFunctionMapping(aibRelayFunction, s4RelayFunction),
-            S4Equipment(equiId, _, _, _),
+            S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
             AibStringValue(aibRelayFunction, plinum, value).
 
@@ -97,7 +97,7 @@ mod WF.AI2ToS4.Characteristics.LSTN {
 
         ValuaEquiDecimal(equiId, s4RelayOn, value) :- 
             RelayOnMapping(aibRelayOn, s4RelayOn),
-            S4Equipment(equiId, _, _, _),
+            S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
             ValuaEquiDecimal(aibRelayOn, plinum, value).            
 
@@ -110,7 +110,7 @@ mod WF.AI2ToS4.Characteristics.LSTN {
 
         ValuaEquiDecimal(equiId, s4RelayOff, value) :- 
             RelayOffMapping(aibRelayOff, s4RelayOff),
-            S4Equipment(equiId, _, _, _),
+            S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
             ValuaEquiDecimal(aibRelayOff, plinum, value).            
 

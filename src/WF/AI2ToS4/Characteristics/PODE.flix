@@ -14,17 +14,17 @@
  *  limitations under the License.
  */
 
-mod WF.AI2ToS4.Characteristics.NETW {
+mod WF.AI2ToS4.Characteristics.PODE {
 
-    // S4Equipment(equiId = String, name = String, objType = String, classType = String, Floc = String, status = String)
+    // S4Equipment(equiId = String, name = String, objType = String, classType = String, floc = String, status = String)
 
-    pub def netwtl(): #{ValuaEquiString(String, String, String), 
+    pub def podetu(): #{ValuaEquiString(String, String, String), 
                             S4Equipment(String, String, String, String, String, String),
                             EquiMapping(String, String),
                             AibStringValue(String, String, String)} = #{
 
         ValuaEquiString(equiId, "LOCATION_ON_SITE", value) :- 
-            S4Equipment(equiId, _, "NETW", "NETWTL", _, _),
+            S4Equipment(equiId, _, "PODE", "PODETU", _, _),
             EquiMapping(plinum, equiId),
             AibStringValue("Location On Site", plinum, value).
 
