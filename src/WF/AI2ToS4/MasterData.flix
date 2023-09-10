@@ -18,9 +18,9 @@ mod WF.AI2ToS4.MasterData {
 
     // S4Equipment(equiId = String, name = String, objType = String, classType = String, floc = String, status = String)
 
-    pub def masterData(): #{ValuaEquiString(String, String, String), 
-                            ValuaEquiInt(String, String, Int32),
-                            ValuaEquiDate(String, String, Time.LocalDate), 
+    pub def masterData(): #{MasterDataString(String, String, String), 
+                            MasterDataInt(String, String, Int32),
+                            MasterDataDate(String, String, Time.LocalDate), 
                             S4Equipment(String, String, String, String, String, String),
                             EquiMapping(String, String),
                             AibStringValue(String, String, String),
@@ -28,39 +28,39 @@ mod WF.AI2ToS4.MasterData {
                             UserStatus(String, String)
                             } = #{
 
-        ValuaEquiString(equiId, "HERST", aibvalue) :- 
+        MasterDataString(equiId, "HERST", aibvalue) :- 
             S4Equipment(equiId, _, _, _, _, _),
             EquiMapping(plinum, equiId),
             AibStringValue(plinum, "Manufacturer", aibvalue).
 
-        ValuaEquiString(equiId, "TYPBZ", aibvalue) :- 
+        MasterDataString(equiId, "TYPBZ", aibvalue) :- 
             S4Equipment(equiId, _, _, _, _, _),
             EquiMapping(plinum, equiId),
             AibStringValue(plinum, "Model Name", aibvalue).
 
-        ValuaEquiString(equiId, "MAPA_EEQZ", aibvalue) :- 
+        MasterDataString(equiId, "MAPA_EEQZ", aibvalue) :- 
             S4Equipment(equiId, _, _, _, _, _),
             EquiMapping(plinum, equiId),
             AibStringValue(plinum, "Specific Model/Frame", aibvalue).
 
-        ValuaEquiString(equiId, "SERGE", aibvalue) :- 
+        MasterDataString(equiId, "SERGE", aibvalue) :- 
             S4Equipment(equiId, _, _, _, _, _),
             EquiMapping(plinum, equiId),
             AibStringValue(plinum, "Serial No", aibvalue).
 
 
-        ValuaEquiString(equiId, "TIDN_EEQZ", aibvalue) :- 
+        MasterDataString(equiId, "TIDN_EEQZ", aibvalue) :- 
             S4Equipment(equiId, _, _, _, _, _),
             EquiMapping(plinum, equiId),
             AibStringValue(plinum, "P AND I Tag No", aibvalue).
     
-        ValuaEquiString(equiId, "USTA_EQUI", s4Status) :- 
+        MasterDataString(equiId, "USTA_EQUI", s4Status) :- 
             S4Equipment(equiId, _, _, _, _, _),
             EquiMapping(plinum, equiId),
             AibStringValue(plinum, "Asset Status", aibvalue),
             UserStatus(aibvalue, s4Status).
 
-        ValuaEquiString(equiId, "USTW_EQUI", s4Status) :- 
+        MasterDataString(equiId, "USTW_EQUI", s4Status) :- 
             S4Equipment(equiId, _, _, _, _, _),
             EquiMapping(plinum, equiId),
             AibStringValue(plinum, "Asset Status", aibvalue),
@@ -73,17 +73,17 @@ mod WF.AI2ToS4.MasterData {
         UserStatus("TO BE CONSTRUCTED",     "UCON").
 
         /// Startup Date
-        ValuaEquiDate(equiId, "INBT", Time.LocalDateTime.toLocalDate(value)) :- 
+        MasterDataDate(equiId, "INBT", Time.LocalDateTime.toLocalDate(value)) :- 
             S4Equipment(equiId, _, _, _, _, _),
             EquiMapping(plinum, equiId),
             AibDateTimeValue(plinum, "Installed From Date", value).
         
-        ValuaEquiInt(equiId, "BAUJJ", Time.LocalDateTime.getYear(value)) :- 
+        MasterDataInt(equiId, "BAUJJ", Time.LocalDateTime.getYear(value)) :- 
             S4Equipment(equiId, _, _, _, _, _),
             EquiMapping(plinum, equiId),
             AibDateTimeValue(plinum, "Installed From Date", value).
 
-        ValuaEquiInt(equiId, "BAUMM_EQI", Time.LocalDateTime.getMonth(value) |> Time.Month.getValue) :- 
+        MasterDataInt(equiId, "BAUMM_EQI", Time.LocalDateTime.getMonth(value) |> Time.Month.getValue) :- 
             S4Equipment(equiId, _, _, _, _, _),
             EquiMapping(plinum, equiId),
             AibDateTimeValue(plinum, "Installed From Date", value).
