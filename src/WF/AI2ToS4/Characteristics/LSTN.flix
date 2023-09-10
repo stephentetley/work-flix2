@@ -20,12 +20,12 @@ mod WF.AI2ToS4.Characteristics.LSTN {
 
 
     pub def lstnut(): #{ValuaEquiString(String, String, String), 
-                            ValuaEquiDecimal(String, String, Float64), 
+                            ValuaEquiDecimal(String, String, BigDecimal), 
                             S4Equipment(String, String, String, String, String, String),
                             EquiMapping(String, String), 
                             AibStringValue(String, String, String), 
                             AibIntValue(String, String, Int32),
-                            AibDecimalValue(String, String, Float64), 
+                            AibDecimalValue(String, String, BigDecimal), 
                             RelayFunctionMapping(String, String),
                             RelayOnMapping(String, String),
                             RelayOffMapping(String, String),
