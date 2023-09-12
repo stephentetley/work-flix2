@@ -16,14 +16,17 @@
 
 mod WF.AI2ToS4.Characteristics.NETW {
 
+    use WF.Base.DataSource
+    use WF.Base.DataSource.{ValuaEqui}
+
     // S4Equipment(equiId = String, name = String, objType = String, classType = String, Floc = String, status = String)
 
-    pub def netwtl(): #{ValuaEquiString(String, String, String), 
+    pub def netwtl(): #{AttrString(String, DataSource, String, String), 
                             S4Equipment(String, String, String, String, String, String),
                             EquiMapping(String, String),
                             AibStringValue(String, String, String)} = #{
 
-        ValuaEquiString(equiId, "LOCATION_ON_SITE", value) :- 
+        AttrString(equiId, ValuaEqui, "LOCATION_ON_SITE", value) :- 
             S4Equipment(equiId, _, "NETW", "NETWTL", _, _),
             EquiMapping(plinum, equiId),
             AibStringValue("Location On Site", plinum, value).

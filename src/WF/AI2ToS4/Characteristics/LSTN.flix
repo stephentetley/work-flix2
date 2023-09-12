@@ -16,50 +16,54 @@
 
 mod WF.AI2ToS4.Characteristics.LSTN {
 
+
+    use WF.Base.DataSource
+    use WF.Base.DataSource.{ValuaEqui}
+
     // S4Equipment(equiId = String, name = String, objType = String, classType = String, floc = String, status = String)
 
 
-    pub def lstnut(): #{ValuaEquiString(String, String, String), 
-                            ValuaEquiDecimal(String, String, BigDecimal), 
-                            S4Equipment(String, String, String, String, String, String),
-                            EquiMapping(String, String), 
-                            AibStringValue(String, String, String), 
-                            AibIntValue(String, String, Int32),
-                            AibDecimalValue(String, String, BigDecimal), 
-                            RelayFunctionMapping(String, String),
-                            RelayOnMapping(String, String),
-                            RelayOffMapping(String, String),
-                            RangeUnits(String, String),
-                            SignalType3(Int32, Int32, String, String)
-                            } = #{
+    pub def lstnut(): #{AttrString(String, DataSource, String, String), 
+                        AttrDecimal(String, DataSource, String, BigDecimal), 
+                        S4Equipment(String, String, String, String, String, String),
+                        EquiMapping(String, String), 
+                        AibStringValue(String, String, String), 
+                        AibIntValue(String, String, Int32),
+                        AibDecimalValue(String, String, BigDecimal), 
+                        RelayFunctionMapping(String, String),
+                        RelayOnMapping(String, String),
+                        RelayOffMapping(String, String),
+                        RangeUnits(String, String),
+                        SignalType3(Int32, Int32, String, String)
+                        } = #{
         
-        ValuaEquiString(equiId, "LOCATION_ON_SITE", value) :- 
+        AttrString(equiId, ValuaEqui, "LOCATION_ON_SITE", value) :- 
             S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
             AibStringValue("Location On Site", plinum, value).
 
-        ValuaEquiString(equiId, "LSTN_TRANSDUCER_MODEL", value) :- 
+        AttrString(equiId, ValuaEqui, "LSTN_TRANSDUCER_MODEL", value) :- 
             S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
             AibStringValue("Transducer Type", plinum, value).
 
-        ValuaEquiString(equiId, "LSTN_TRANSDUCER_SERIAL_NO", value) :- 
+        AttrString(equiId, ValuaEqui, "LSTN_TRANSDUCER_SERIAL_NO", value) :- 
             S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
             AibStringValue("Transducer Serial No", plinum, value).
 
-        ValuaEquiDecimal(equiId, "LSTN_RANGE_MIN", value) :- 
+        AttrDecimal(equiId, ValuaEqui, "LSTN_RANGE_MIN", value) :- 
             S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
             AibDecimalValue("Range min", plinum, value).
 
-        ValuaEquiDecimal(equiId, "LSTN_RANGE_MAX", value) :- 
+        AttrDecimal(equiId, ValuaEqui, "LSTN_RANGE_MAX", value) :- 
             S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
             AibDecimalValue("Range max", plinum, value).            
 
 
-        ValuaEquiString(equiId, "LSTN_RANGE_UNITS", s4Units) :- 
+        AttrString(equiId, ValuaEqui, "LSTN_RANGE_UNITS", s4Units) :- 
             S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
             AibStringValue("Range unit", plinum, aibval),
@@ -70,7 +74,7 @@ mod WF.AI2ToS4.Characteristics.LSTN {
         RangeUnits("mm",    "MM").
 
         /// TODO "Signal min" / "Signal max" might not be ints
-        ValuaEquiString(equiId, "LSTN_SIGNAL_TYPE", signalType) :- 
+        AttrString(equiId, ValuaEqui, "LSTN_SIGNAL_TYPE", signalType) :- 
             S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
             AibIntValue("Signal min", plinum, aibmin),
@@ -82,7 +86,7 @@ mod WF.AI2ToS4.Characteristics.LSTN {
         SignalType3(1, 0, "DIGITAL",        "1 - 0 DIGITAL").
         SignalType3(4, 20, "MA",            "4 - 20 MA").
 
-        ValuaEquiString(equiId, s4RelayFunction, value) :- 
+        AttrString(equiId, ValuaEqui, s4RelayFunction, value) :- 
             RelayFunctionMapping(aibRelayFunction, s4RelayFunction),
             S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
@@ -95,11 +99,11 @@ mod WF.AI2ToS4.Characteristics.LSTN {
         RelayFunctionMapping("Relay 5 Function", "LSTN_RELAY_5_FUNCTION").
         RelayFunctionMapping("Relay 6 Function", "LSTN_RELAY_6_FUNCTION").
 
-        ValuaEquiDecimal(equiId, s4RelayOn, value) :- 
+        AttrDecimal(equiId, ValuaEqui, s4RelayOn, value) :- 
             RelayOnMapping(aibRelayOn, s4RelayOn),
             S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
-            ValuaEquiDecimal(aibRelayOn, plinum, value).            
+            AibDecimalValue(aibRelayOn, plinum, value).            
 
         RelayOnMapping("Relay 1 on Level (m)", "LSTN_RELAY_1_ON_LEVEL_M").
         RelayOnMapping("Relay 2 on Level (m)", "LSTN_RELAY_2_ON_LEVEL_M").
@@ -108,11 +112,11 @@ mod WF.AI2ToS4.Characteristics.LSTN {
         RelayOnMapping("Relay 5 on Level (m)", "LSTN_RELAY_5_ON_LEVEL_M").
         RelayOnMapping("Relay 6 on Level (m)", "LSTN_RELAY_6_ON_LEVEL_M").
 
-        ValuaEquiDecimal(equiId, s4RelayOff, value) :- 
+        AttrDecimal(equiId, ValuaEqui, s4RelayOff, value) :- 
             RelayOffMapping(aibRelayOff, s4RelayOff),
             S4Equipment(equiId, _, "LSTN", "LSTNUT", _, _),
             EquiMapping(plinum, equiId),
-            ValuaEquiDecimal(aibRelayOff, plinum, value).            
+            AibDecimalValue(aibRelayOff, plinum, value).            
 
         RelayOffMapping("Relay 1 off Level (m)", "LSTN_RELAY_1_OFF_LEVEL_M").
         RelayOffMapping("Relay 2 off Level (m)", "LSTN_RELAY_2_OFF_LEVEL_M").

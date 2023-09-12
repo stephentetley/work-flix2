@@ -16,14 +16,17 @@
 
 mod WF.AI2ToS4.Characteristics.PODE {
 
+    use WF.Base.DataSource
+    use WF.Base.DataSource.{ValuaEqui}
+
     // S4Equipment(equiId = String, name = String, objType = String, classType = String, floc = String, status = String)
 
-    pub def podetu(): #{ValuaEquiString(String, String, String), 
-                            S4Equipment(String, String, String, String, String, String),
-                            EquiMapping(String, String),
-                            AibStringValue(String, String, String)} = #{
+    pub def podetu(): #{AttrString(String, DataSource, String, String), 
+                        S4Equipment(String, String, String, String, String, String),
+                        EquiMapping(String, String),
+                        AibStringValue(String, String, String)} = #{
 
-        ValuaEquiString(equiId, "LOCATION_ON_SITE", value) :- 
+        AttrString(equiId, ValuaEqui, "LOCATION_ON_SITE", value) :- 
             S4Equipment(equiId, _, "PODE", "PODETU", _, _),
             EquiMapping(plinum, equiId),
             AibStringValue("Location On Site", plinum, value).
