@@ -1,0 +1,11 @@
+[package]
+name        = "floc-rewriting"
+description = "Rewriting functional locations."
+version     = "0.1.0"
+flix        = "0.48.0"
+license     = "Apache-2.0"
+authors     = ["Stephen Tetley <stephen.tetley@gmail.com>"]
+
+[dependencies]
+
+
