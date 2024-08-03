@@ -20,12 +20,14 @@ mod FlocRewriting.Worklist {
 
     pub def worklist(): List[(String, String, String, String)] = List#{
         ("SAI00611686", "JUPITER AVENUE/DTK", "JUPITER AVENUE/DTK", "SITE"),
-        ("SAI00644732", "JUPITER AVENUE/DTK/CONTROL SERVICES", "CONTROL SERVICES", "PROCESS_GROUP")
+        ("SAI00644732", "JUPITER AVENUE/DTK/CONTROL SERVICES", "CONTROL SERVICES", "PROCESS_GROUP"),
+        ("SAI00644733", "JUPITER AVENUE/DTK/CONTROL SERVICES/RTS MONITORING", "RTS MONITORING", "PROCESS")
     }
 
     // Facts extracted from WorkList
     pub def childOf(): List[(String, String)] = List#{
-        ("SAI00644732", "SAI00611686")
+        ("SAI00644732", "SAI00611686"),
+        ("SAI00644733", "SAI00644732")
     }
 
 }
