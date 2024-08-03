@@ -23,7 +23,7 @@ mod FlocRewriting.Rewrite {
         let siteMapping = inject ss1 into SiteMap;
         let ws1 = FlocRewriting.Worklist.worklist();
         let worklist = inject ws1 into WorkList;
-        let kids1 = FlocRewriting.Worklist.childOf();
+        let kids1 = FlocRewriting.Worklist.childsOf(ws1);
         let descendents = inject kids1 into ChildOf;
         let rules = level01() <+> level02() <+> level03() <+> level04();
         let ans = query siteMapping, worklist, descendents, rules select (a, b, c, d, e) from Floc(a, b, c, d, e);
@@ -47,13 +47,31 @@ mod FlocRewriting.Rewrite {
             WorkList(aibSaiNum, _, "CONTROL SERVICES", "PROCESS_GROUP"),
             ChildOf(aibSaiNum, aibParent),
             Floc(aibParent, 1, s4Parent, _, _).
+
+        Floc(aibSaiNum, 3, s4Parent + "-SMS", "Site Maint Services", "SMS") :- 
+            WorkList(aibSaiNum, _, "STATUTORY", "PROCESS_GROUP"),
+            ChildOf(aibSaiNum, aibParent),
+            Floc(aibParent, 1, s4Parent, _, _).
+
+
     }
 
     def level03(): #{ Floc(String, Int32, String, String, String), 
                         WorkList(String, String, String, String), 
                         ChildOf(String, String) | r} = #{
+
         Floc(aibSaiNum, 3, s4Parent + "-NET", "Networks", "NET") :- 
             WorkList(aibSaiNum, _, "RTS MONITORING", "PROCESS"),
+            ChildOf(aibSaiNum, aibParent),
+            Floc(aibParent, 2, s4Parent, _, _).
+        
+        Floc(aibSaiNum, 3, s4Parent + "-CON", "Control", "CON") :- 
+            WorkList(aibSaiNum, _, "MPLC CONTROL", "PROCESS"),
+            ChildOf(aibSaiNum, aibParent),
+            Floc(aibParent, 2, s4Parent, _, _).
+
+        Floc(aibSaiNum, 3, s4Parent + "-LFT", "Site Lifting", "LFT") :- 
+            WorkList(aibSaiNum, _, "LIFTING EQUIPMENT", "PROCESS"),
             ChildOf(aibSaiNum, aibParent),
             Floc(aibParent, 2, s4Parent, _, _).
     }
@@ -61,9 +79,25 @@ mod FlocRewriting.Rewrite {
     def level04(): #{ Floc(String, Int32, String, String, String), 
                         WorkList(String, String, String, String), 
                         ChildOf(String, String) | r} = #{
+
         Floc(aibSaiNum, 4, s4Parent + "-TEL", "Telemetry", "TEL") :- 
             WorkList(aibSaiNum, _, "RTS MONITORING", "PROCESS"),
             Floc(aibSaiNum, 3, s4Parent, _, _).
+
+        Floc(aibSaiNum, 4, s4Parent + "-LOC", "Logic Controllers", "LOC") :- 
+            WorkList(aibSaiNum, _, "MPLC CONTROL", "PROCESS"),
+            Floc(aibSaiNum, 3, s4Parent, _, _).
+
+        Floc(aibSaiNum, 4, s4Parent + "-FLT", "Fixed Lifting", "FLT") :- 
+            WorkList(aibSaiNum, _, "LIFTING EQUIPMENT", "PROCESS"),
+            ChildOf(aibSaiNum, aibParent),
+            Floc(aibParent, 3, s4Parent, _, _).
+
+        Floc(aibSaiNum, 4, s4Parent + "-PLR", "Portable Lifting", "PLR") :- 
+            WorkList(aibSaiNum, _, "LIFTING EQUIPMENT", "PROCESS"),
+            ChildOf(aibSaiNum, aibParent),
+            Floc(aibParent, 3, s4Parent, _, _).
+
     }
 
 }
