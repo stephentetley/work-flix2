@@ -22,11 +22,16 @@ pub def main(): Unit \ IO =
 
 def sysHints(): List[(String, String, Int32)] = List#{
     ("BLG", "Kiosk System", 1),
+    ("FLA", "Detention Tank System", 1),
     ("OAC", "Odour Control System", 1)
 }
 
-def subsysHints(): List[(String, String, Int32, String, String, Int32)] = List#{
-    ("OAC", "Vent Stack", 1, "STAK", "STK", 1)
+def subsysHints(): List[(String, String, Int32, String, Int32)] = List#{
+    ("OAC", "Vent Stack", 1, "STAK", 1), 
+    ("FLA", "Detention Tank", 1, "TANK", 1), 
+    ("FLA", "Tank Sewer", 1, "TANK", 2),
+    ("FLA", "M01101 No 1 Return Pump", 1, "PUMP", 1), 
+    ("FLA", "M01102 No 2 Return Pump", 1, "PUMP", 2)
 }
 
 

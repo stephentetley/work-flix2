@@ -19,9 +19,11 @@
 mod FlocRewriting.Rewrite {
 
     pub def rewrite(sysHints: List[(String, String, Int32)], 
-                    subsysHints: List[(String, String, Int32, String, String, Int32)]): List[(String, Int32, String, String, String)] = 
-        let ss1 = FlocRewriting.Sites.siteMapping();
-        let siteMapping = inject ss1 into SiteMap;
+                    subsysHints: List[(String, String, Int32, String, Int32)]): List[(String, Int32, String, String, String)] = 
+        let siteList = FlocRewriting.Mappings.siteMapping();
+        let sitesMap = inject siteList into SiteMap;
+        let abbrevList = FlocRewriting.Mappings.subsysAbbrev();
+        let abbrevs6 = inject abbrevList into SubSysAbbrev;
         let ws1 = FlocRewriting.Worklist.worklist();
         let worklist = inject ws1 into WorkList;
         let kids1 = FlocRewriting.Worklist.childsOf(ws1);
@@ -29,7 +31,7 @@ mod FlocRewriting.Rewrite {
         let hints5 = inject sysHints into SysHint;
         let hints6 = inject subsysHints into SubSysHint;
         let rules = level01() <+> level02() <+> level03() <+> level04() <+> level05() <+> level06() <+> flocs();
-        let ans = query siteMapping, worklist, descendents, hints5, hints6, rules select (a, b, c, d, e) from Floc(a, b, c, d, e);
+        let ans = query sitesMap, abbrevs6, worklist, descendents, hints5, hints6, rules select (a, b, c, d, e) from Floc(a, b, c, d, e);
         Vector.toList(ans) |> List.sortBy(match(_, _, floc, _, _) -> floc)
 
 
@@ -39,9 +41,7 @@ mod FlocRewriting.Rewrite {
                         Level3(String, String, String, String),
                         Level4(String, String, String, String),
                         Level5(String, String, String, String),
-                        Level6(String, String, String, String),
-                        SysHint(String, String, Int32), 
-                        SubSysHint(String, String, Int32, String, String, Int32)
+                        Level6(String, String, String, String)
                          | r} = #{
     
             Floc(aibSaiNum, 1, s4Floc, s4name, "SITE") :- Level1(aibSaiNum, s4Floc, s4name).
@@ -101,6 +101,11 @@ mod FlocRewriting.Rewrite {
             WorkList(aibSaiNum, _, _, "ODOUR CONTROL"),
             ChildOf(aibSaiNum, aibParent),
             Level1(aibParent, s4Parent, _).
+        
+        Level2(aibSaiNum, makeFloc("", "WTN"), "Waste Water Transmission", "WTN") :- 
+            WorkList(aibSaiNum, _, _, "RETENTION"),
+            ChildOf(aibSaiNum, aibParent),
+            Level1(aibParent, s4Parent, _).
 
     }
 
@@ -131,6 +136,10 @@ mod FlocRewriting.Rewrite {
 
         Level3(aibSaiNum, makeFloc(s4Parent, "SLM"), "Site Land Management", "SLM") :- 
             WorkList(aibSaiNum, _, _, "ODOUR CONTROL"),
+            Level2(aibSaiNum, s4Parent, _, _).
+
+        Level3(aibSaiNum, makeFloc(s4Parent, "WTF"), "Waste Water Transfer", "WTF") :- 
+            WorkList(aibSaiNum, _, _, "RETENTION"),
             Level2(aibSaiNum, s4Parent, _, _).
 
     }
@@ -165,6 +174,9 @@ mod FlocRewriting.Rewrite {
             ChildOf(aibSaiNum, aibParent),
             Level3(aibParent, s4Parent, _, _).
 
+        Level4(aibSaiNum, makeFloc(s4Parent, "FLA"), "Flow Attenuation", "FLA") :- 
+            WorkList(aibSaiNum, _, _, "RETENTION"),
+            Level3(aibSaiNum, s4Parent, _, _).
     }
 
     def level05(): #{ Level5(String, String, String, String), 
@@ -187,20 +199,33 @@ mod FlocRewriting.Rewrite {
 
         Level5(aibSaiNum, makeSysFloc(s4Parent, sysIndex), sysName, "SODR") :- 
             WorkList(aibSaiNum, _, _, "ODOUR FILTERING"),
-            Level4(aibParent, s4Parent, _, _),
+            Level4(aibParent, s4Parent, _, "OAC"),
             SysHint("OAC", sysName, sysIndex).
+
+        Level5(aibSaiNum, makeSysFloc(s4Parent, sysIndex), sysName, "STNK") :- 
+            WorkList(aibSaiNum, _, _, "RETENTION"),
+            Level4(aibParent, s4Parent, _, "FLA"),
+            SysHint("FLA", sysName, sysIndex).
 
     }
 
     def level06(): #{ Level6(String, String, String, String), 
                         WorkList(String, String, String, String),
+                        SubSysAbbrev(String, String),
                         Level4(String, String, String, String), 
-                        SubSysHint(String, String, Int32, String, String, Int32) | r} = #{
+                        SubSysHint(String, String, Int32, String, Int32) | r} = #{
 
-        Level6(aibSaiNum, makeSubSysFloc(s4Parent, sysIndex, typDesc, subIndex), "_", typ) :- 
+        Level6(aibSaiNum, makeSubSysFloc(s4Parent, sysIndex, abbrev, subIndex), subName, typ) :- 
             WorkList(aibSaiNum, _, _, "ODOUR FILTERING"),
-            Level4(aibParent, s4Parent, _, _),
-            SubSysHint("OAC", sysName, sysIndex, typ, typDesc, subIndex).
+            Level4(aibParent, s4Parent, _, "OAC"),
+            SubSysHint("OAC", subName, sysIndex, typ, subIndex),
+            SubSysAbbrev(typ, abbrev).
+
+        Level6(aibSaiNum, makeSubSysFloc(s4Parent, sysIndex, abbrev, subIndex), subName, typ) :- 
+            WorkList(aibSaiNum, _, _, "RETENTION"),
+            Level4(aibParent, s4Parent, _, "FLA"),
+            SubSysHint("FLA", subName, sysIndex, typ, subIndex),
+            SubSysAbbrev(typ, abbrev).
 
     }
 

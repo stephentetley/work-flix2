@@ -16,11 +16,20 @@
 
 
 
-mod FlocRewriting.Sites {
+mod FlocRewriting.Mappings {
 
     pub def siteMapping(): List[(String, String, String, String)] = List#{
         ("SAI00611686", "JUPITER AVENUE/DTK", "JUP01", "Jupiter Avenue DTK"),
         ("SAI00789678", "SATURN ROAD/SCC", "SAT01", "Saturn Road SCC")
     }
+
+    pub def subsysAbbrev(): List[(String, String)] = List#{
+        ("KISK", "KIS"),
+        ("PUMP", "PMP"),
+        ("PUMS", "PMP"),
+        ("STAK", "STK"),
+        ("TANK", "TNK")
+    }
+
 
 }
