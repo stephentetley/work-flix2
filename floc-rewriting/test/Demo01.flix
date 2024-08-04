@@ -17,5 +17,11 @@
 
 
 pub def main(): Unit \ IO = 
-    let ans = FlocRewriting.Rewrite.rewrite();
+    let ans = FlocRewriting.Rewrite.rewrite(hints());
     List.forEach(println, ans)
+
+def hints(): List[(String, String, Int32)] = List#{
+    ("BLG", "Kiosk System", 1)
+}
+
+

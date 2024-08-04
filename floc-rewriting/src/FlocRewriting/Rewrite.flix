@@ -18,15 +18,16 @@
 
 mod FlocRewriting.Rewrite {
 
-    pub def rewrite(): List[(String, Int32, String, String, String)] = 
+    pub def rewrite(sysHints: List[(String, String, Int32)]): List[(String, Int32, String, String, String)] = 
         let ss1 = FlocRewriting.Sites.siteMapping();
         let siteMapping = inject ss1 into SiteMap;
         let ws1 = FlocRewriting.Worklist.worklist();
         let worklist = inject ws1 into WorkList;
         let kids1 = FlocRewriting.Worklist.childsOf(ws1);
         let descendents = inject kids1 into ChildOf;
+        let hints5 = inject sysHints into SysHint;
         let rules = level01() <+> level02() <+> level03() <+> level04() <+> level05() <+> flocs();
-        let ans = query siteMapping, worklist, descendents, rules select (a, b, c, d, e) from Floc(a, b, c, d, e);
+        let ans = query siteMapping, worklist, descendents, hints5, rules select (a, b, c, d, e) from Floc(a, b, c, d, e);
         Vector.toList(ans) |> List.sortBy(match(_, _, floc, _, _) -> floc)
 
 
@@ -35,7 +36,8 @@ mod FlocRewriting.Rewrite {
                         Level2(String, String, String, String),
                         Level3(String, String, String, String),
                         Level4(String, String, String, String),
-                        Level5(String, String, String, String)
+                        Level5(String, String, String, String),
+                        SysHint(String, String, Int32)
                          | r} = #{
     
             Floc(aibSaiNum, 1, s4Floc, s4name, "SITE") :- Level1(aibSaiNum, s4Floc, s4name).
@@ -144,15 +146,27 @@ mod FlocRewriting.Rewrite {
 
     def level05(): #{ Level5(String, String, String, String), 
                         WorkList(String, String, String, String),
-                        Level4(String, String, String, String) | r} = #{
+                        Level4(String, String, String, String), 
+                        SysHint(String, String, Int32) | r} = #{
 
-        Level5(aibSaiNum, s4Parent + "-SYS01", "Fixed Lifting System", "SLFS") :- 
+        Level5(aibSaiNum, makeSysFloc(s4Parent, 1), "Fixed Lifting System", "SLFS") :- 
             WorkList(aibSaiNum, _, _, "LIFTING EQUIPMENT"),
             Level4(aibSaiNum, s4Parent, _, "FLT").
 
-        Level5(aibSaiNum, s4Parent + "-SYS01", "Portable Lifting System", "SLFS") :- 
+        Level5(aibSaiNum, makeSysFloc(s4Parent, 1), "Portable Lifting System", "SLFS") :- 
             WorkList(aibSaiNum, _, _, "LIFTING EQUIPMENT"),
             Level4(aibSaiNum, s4Parent, _, "PLR").
 
+        Level5(aibSaiNum, makeSysFloc(s4Parent, sysIndex), sysName, "SKIO") :- 
+            WorkList(aibSaiNum, _, _, "STRUCTURES + SERVICES"),
+            Level4(aibSaiNum, s4Parent, _, "BLG"),
+            SysHint("BLG", sysName, sysIndex).
+
+
     }
+
+    def makeSysFloc(parent: String, ix: Int32): String = 
+        parent + "-SYS" + String.padLeft(2, '0', ToString.toString(ix))
+
+
 }
