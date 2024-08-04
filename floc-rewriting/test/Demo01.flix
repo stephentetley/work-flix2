@@ -17,11 +17,17 @@
 
 
 pub def main(): Unit \ IO = 
-    let ans = FlocRewriting.Rewrite.rewrite(hints());
+    let ans = FlocRewriting.Rewrite.rewrite(sysHints(), subsysHints());
     List.forEach(println, ans)
 
-def hints(): List[(String, String, Int32)] = List#{
-    ("BLG", "Kiosk System", 1)
+def sysHints(): List[(String, String, Int32)] = List#{
+    ("BLG", "Kiosk System", 1),
+    ("OAC", "Odour Control System", 1)
 }
+
+def subsysHints(): List[(String, String, Int32, String, String, Int32)] = List#{
+    ("OAC", "Vent Stack", 1, "STAK", "STK", 1)
+}
+
 
 

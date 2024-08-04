@@ -18,7 +18,8 @@
 
 mod FlocRewriting.Rewrite {
 
-    pub def rewrite(sysHints: List[(String, String, Int32)]): List[(String, Int32, String, String, String)] = 
+    pub def rewrite(sysHints: List[(String, String, Int32)], 
+                    subsysHints: List[(String, String, Int32, String, String, Int32)]): List[(String, Int32, String, String, String)] = 
         let ss1 = FlocRewriting.Sites.siteMapping();
         let siteMapping = inject ss1 into SiteMap;
         let ws1 = FlocRewriting.Worklist.worklist();
@@ -26,8 +27,9 @@ mod FlocRewriting.Rewrite {
         let kids1 = FlocRewriting.Worklist.childsOf(ws1);
         let descendents = inject kids1 into ChildOf;
         let hints5 = inject sysHints into SysHint;
-        let rules = level01() <+> level02() <+> level03() <+> level04() <+> level05() <+> flocs();
-        let ans = query siteMapping, worklist, descendents, hints5, rules select (a, b, c, d, e) from Floc(a, b, c, d, e);
+        let hints6 = inject subsysHints into SubSysHint;
+        let rules = level01() <+> level02() <+> level03() <+> level04() <+> level05() <+> level06() <+> flocs();
+        let ans = query siteMapping, worklist, descendents, hints5, hints6, rules select (a, b, c, d, e) from Floc(a, b, c, d, e);
         Vector.toList(ans) |> List.sortBy(match(_, _, floc, _, _) -> floc)
 
 
@@ -37,7 +39,9 @@ mod FlocRewriting.Rewrite {
                         Level3(String, String, String, String),
                         Level4(String, String, String, String),
                         Level5(String, String, String, String),
-                        SysHint(String, String, Int32)
+                        Level6(String, String, String, String),
+                        SysHint(String, String, Int32), 
+                        SubSysHint(String, String, Int32, String, String, Int32)
                          | r} = #{
     
             Floc(aibSaiNum, 1, s4Floc, s4name, "SITE") :- Level1(aibSaiNum, s4Floc, s4name).
@@ -57,6 +61,10 @@ mod FlocRewriting.Rewrite {
             Floc(aibSaiNum, 5, siteFloc + s4Floc, s4name, objType) :- 
                 Level1(_, siteFloc, _),
                 Level5(aibSaiNum, s4Floc, s4name, objType).
+
+            Floc(aibSaiNum, 6, siteFloc + s4Floc, s4name, objType) :- 
+                Level1(_, siteFloc, _),
+                Level6(aibSaiNum, s4Floc, s4name, objType).
     }
 
     def level01(): #{ Level1(String, String, String),
@@ -74,18 +82,23 @@ mod FlocRewriting.Rewrite {
                         WorkList(String, String, String, String), 
                         ChildOf(String, String), 
                         Level1(String, String, String) | r} = #{
-        Level2(aibSaiNum, "-CAA", "Control and Automation", "CAA") :- 
+        Level2(aibSaiNum, makeFloc("", "CAA"), "Control and Automation", "CAA") :- 
             WorkList(aibSaiNum, _, _, "CONTROL SERVICES"),
             ChildOf(aibSaiNum, aibParent),
             Level1(aibParent, s4Parent, _).
 
-        Level2(aibSaiNum, "-SIF", "Site Infrastructure", "SIF") :- 
+        Level2(aibSaiNum, makeFloc("", "SIF"), "Site Infrastructure", "SIF") :- 
             WorkList(aibSaiNum, _, _, "INSTALLATION SERVICES"),
             ChildOf(aibSaiNum, aibParent),
             Level1(aibParent, s4Parent, _).
 
-        Level2(aibSaiNum, "-SMS", "Site Maint Services", "SMS") :- 
+        Level2(aibSaiNum, makeFloc("", "SMS"), "Site Maint Services", "SMS") :- 
             WorkList(aibSaiNum, _, _, "STATUTORY"),
+            ChildOf(aibSaiNum, aibParent),
+            Level1(aibParent, s4Parent, _).
+        
+        Level2(aibSaiNum, makeFloc("", "SSS"), "Site Support Services", "SSS") :- 
+            WorkList(aibSaiNum, _, _, "ODOUR CONTROL"),
             ChildOf(aibSaiNum, aibParent),
             Level1(aibParent, s4Parent, _).
 
@@ -96,25 +109,30 @@ mod FlocRewriting.Rewrite {
                         ChildOf(String, String),
                         Level2(String, String, String, String) | r} = #{
 
-        Level3(aibSaiNum, s4Parent + "-NET", "Networks", "NET") :- 
+        Level3(aibSaiNum, makeFloc(s4Parent, "NET"), "Networks", "NET") :- 
             WorkList(aibSaiNum, _, _, "RTS MONITORING"),
             ChildOf(aibSaiNum, aibParent),
             Level2(aibParent, s4Parent, _, _).
         
-        Level3(aibSaiNum, s4Parent + "-CON", "Control", "CON") :- 
+        Level3(aibSaiNum, makeFloc(s4Parent, "CON"), "Control", "CON") :- 
             WorkList(aibSaiNum, _, _, "MPLC CONTROL"),
             ChildOf(aibSaiNum, aibParent),
             Level2(aibParent, s4Parent, _, _).
 
-        Level3(aibSaiNum, s4Parent + "-LFT", "Site Lifting", "LFT") :- 
+        Level3(aibSaiNum,makeFloc(s4Parent, "LFT"), "Site Lifting", "LFT") :- 
             WorkList(aibSaiNum, _, _, "LIFTING EQUIPMENT"),
             ChildOf(aibSaiNum, aibParent),
             Level2(aibParent, s4Parent, _, _).
 
-        Level3(aibSaiNum, s4Parent + "-STM", "Structure Management", "STM") :- 
+        Level3(aibSaiNum, makeFloc(s4Parent, "STM"), "Structure Management", "STM") :- 
             WorkList(aibSaiNum, _, _, "STRUCTURES + SERVICES"),
             ChildOf(aibSaiNum, aibParent),
-            Level2(aibParent, s4Parent, _, _).
+            Level2(aibSaiNum, s4Parent, _, _).
+
+        Level3(aibSaiNum, makeFloc(s4Parent, "SLM"), "Site Land Management", "SLM") :- 
+            WorkList(aibSaiNum, _, _, "ODOUR CONTROL"),
+            Level2(aibSaiNum, s4Parent, _, _).
+
     }
 
     def level04(): #{ Level4(String, String, String, String), 
@@ -122,25 +140,30 @@ mod FlocRewriting.Rewrite {
                         ChildOf(String, String), 
                         Level3(String, String, String, String) | r} = #{
 
-        Level4(aibSaiNum, s4Parent + "-TEL", "Telemetry", "TEL") :- 
+        Level4(aibSaiNum, makeFloc(s4Parent, "TEL"), "Telemetry", "TEL") :- 
             WorkList(aibSaiNum, _, _, "RTS MONITORING"),
             Level3(aibSaiNum, s4Parent, _, _).
 
-        Level4(aibSaiNum, s4Parent + "-LOC", "Logic Controllers", "LOC") :- 
+        Level4(aibSaiNum, makeFloc(s4Parent, "LOC"), "Logic Controllers", "LOC") :- 
             WorkList(aibSaiNum, _, _, "MPLC CONTROL"),
             Level3(aibSaiNum, s4Parent, _, _).
 
-        Level4(aibSaiNum, s4Parent + "-FLT", "Fixed Lifting", "FLT") :- 
+        Level4(aibSaiNum, makeFloc(s4Parent, "FLT"), "Fixed Lifting", "FLT") :- 
             WorkList(aibSaiNum, _, _, "LIFTING EQUIPMENT"),
             Level3(aibSaiNum, s4Parent, _, _).
 
-        Level4(aibSaiNum, s4Parent + "-PLR", "Portable Lifting", "PLR") :- 
+        Level4(aibSaiNum, makeFloc(s4Parent, "PLR"), "Portable Lifting", "PLR") :- 
             WorkList(aibSaiNum, _, _, "LIFTING EQUIPMENT"),
             Level3(aibSaiNum, s4Parent, _, _).
         
-        Level4(aibSaiNum, s4Parent + "-BLG", "Buildings", "BLG") :- 
+        Level4(aibSaiNum, makeFloc(s4Parent, "BLG"), "Buildings", "BLG") :- 
             WorkList(aibSaiNum, _, _, "STRUCTURES + SERVICES"),
             Level3(aibSaiNum, s4Parent, _, _).
+
+        Level4(aibSaiNum, makeFloc(s4Parent, "OAC"), "Odour Control", "OAC") :- 
+            WorkList(aibSaiNum, _, _, "ODOUR FILTERING"),
+            ChildOf(aibSaiNum, aibParent),
+            Level3(aibParent, s4Parent, _, _).
 
     }
 
@@ -162,11 +185,32 @@ mod FlocRewriting.Rewrite {
             Level4(aibSaiNum, s4Parent, _, "BLG"),
             SysHint("BLG", sysName, sysIndex).
 
+        Level5(aibSaiNum, makeSysFloc(s4Parent, sysIndex), sysName, "SODR") :- 
+            WorkList(aibSaiNum, _, _, "ODOUR FILTERING"),
+            Level4(aibParent, s4Parent, _, _),
+            SysHint("OAC", sysName, sysIndex).
 
     }
+
+    def level06(): #{ Level6(String, String, String, String), 
+                        WorkList(String, String, String, String),
+                        Level4(String, String, String, String), 
+                        SubSysHint(String, String, Int32, String, String, Int32) | r} = #{
+
+        Level6(aibSaiNum, makeSubSysFloc(s4Parent, sysIndex, typDesc, subIndex), "_", typ) :- 
+            WorkList(aibSaiNum, _, _, "ODOUR FILTERING"),
+            Level4(aibParent, s4Parent, _, _),
+            SubSysHint("OAC", sysName, sysIndex, typ, typDesc, subIndex).
+
+    }
+
+    def makeFloc(parent: String, typ: String): String = 
+        parent + "-" + typ
 
     def makeSysFloc(parent: String, ix: Int32): String = 
         parent + "-SYS" + String.padLeft(2, '0', ToString.toString(ix))
 
+    def makeSubSysFloc(parent: String, sysIx: Int32, subTy: String, subsysIx: Int32): String = 
+        parent + "-SYS" + String.padLeft(2, '0', ToString.toString(sysIx)) + "-" + subTy + String.padLeft(2, '0', ToString.toString(subsysIx))
 
 }
