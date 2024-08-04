@@ -25,105 +25,134 @@ mod FlocRewriting.Rewrite {
         let worklist = inject ws1 into WorkList;
         let kids1 = FlocRewriting.Worklist.childsOf(ws1);
         let descendents = inject kids1 into ChildOf;
-        let rules = level01() <+> level02() <+> level03() <+> level04() <+> level05();
+        let rules = level01() <+> level02() <+> level03() <+> level04() <+> level05() <+> flocs();
         let ans = query siteMapping, worklist, descendents, rules select (a, b, c, d, e) from Floc(a, b, c, d, e);
         Vector.toList(ans) |> List.sortBy(match(_, _, floc, _, _) -> floc)
 
 
-    def level01(): #{ Floc(String, Int32, String, String, String),
+    def flocs(): #{ Floc(String, Int32, String, String, String),
+                        Level1(String, String, String),
+                        Level2(String, String, String, String),
+                        Level3(String, String, String, String),
+                        Level4(String, String, String, String),
+                        Level5(String, String, String, String)
+                         | r} = #{
+    
+            Floc(aibSaiNum, 1, s4Floc, s4name, "SITE") :- Level1(aibSaiNum, s4Floc, s4name).
+            
+            Floc(aibSaiNum, 2, siteFloc + s4Floc, s4name, objType) :- 
+                Level1(_, siteFloc, _),
+                Level2(aibSaiNum, s4Floc, s4name, objType).
+
+            Floc(aibSaiNum, 3, siteFloc + s4Floc, s4name, objType) :- 
+                Level1(_, siteFloc, _),
+                Level3(aibSaiNum, s4Floc, s4name, objType).
+
+            Floc(aibSaiNum, 4, siteFloc + s4Floc, s4name, objType) :- 
+                Level1(_, siteFloc, _),
+                Level4(aibSaiNum, s4Floc, s4name, objType).
+
+            Floc(aibSaiNum, 5, siteFloc + s4Floc, s4name, objType) :- 
+                Level1(_, siteFloc, _),
+                Level5(aibSaiNum, s4Floc, s4name, objType).
+    }
+
+    def level01(): #{ Level1(String, String, String),
                         FlocMapping(String, String), 
                         WorkList(String, String, String, String), 
                         SiteMap(String, String, String, String) | r} = #{
-        Floc(aibSaiNum, 1, s4Floc, s4name, "SITE") :- 
+        Level1(aibSaiNum, s4Floc, s4name) :- 
             WorkList(aibSaiNum, _, _, aibType),
             SiteMap(aibSaiNum, _, s4Floc, s4name).
 
 
-
-
     }
 
-    def level02(): #{ Floc(String, Int32, String, String, String), 
+    def level02(): #{ Level2(String, String, String, String), 
                         WorkList(String, String, String, String), 
-                        ChildOf(String, String) | r} = #{
-        Floc(aibSaiNum, 2, s4Parent + "-CAA", "Control and Automation", "CAA") :- 
+                        ChildOf(String, String), 
+                        Level1(String, String, String) | r} = #{
+        Level2(aibSaiNum, "-CAA", "Control and Automation", "CAA") :- 
             WorkList(aibSaiNum, _, _, "CONTROL SERVICES"),
             ChildOf(aibSaiNum, aibParent),
-            Floc(aibParent, 1, s4Parent, _, _).
+            Level1(aibParent, s4Parent, _).
 
-        Floc(aibSaiNum, 2, s4Parent + "-SIF", "Site Infrastructure", "SIF") :- 
+        Level2(aibSaiNum, "-SIF", "Site Infrastructure", "SIF") :- 
             WorkList(aibSaiNum, _, _, "INSTALLATION SERVICES"),
             ChildOf(aibSaiNum, aibParent),
-            Floc(aibParent, 1, s4Parent, _, _).
+            Level1(aibParent, s4Parent, _).
 
-        Floc(aibSaiNum, 2, s4Parent + "-SMS", "Site Maint Services", "SMS") :- 
+        Level2(aibSaiNum, "-SMS", "Site Maint Services", "SMS") :- 
             WorkList(aibSaiNum, _, _, "STATUTORY"),
             ChildOf(aibSaiNum, aibParent),
-            Floc(aibParent, 1, s4Parent, _, _).
+            Level1(aibParent, s4Parent, _).
 
     }
 
-    def level03(): #{ Floc(String, Int32, String, String, String), 
+    def level03(): #{ Level3(String, String, String, String), 
                         WorkList(String, String, String, String), 
-                        ChildOf(String, String) | r} = #{
+                        ChildOf(String, String),
+                        Level2(String, String, String, String) | r} = #{
 
-        Floc(aibSaiNum, 3, s4Parent + "-NET", "Networks", "NET") :- 
+        Level3(aibSaiNum, s4Parent + "-NET", "Networks", "NET") :- 
             WorkList(aibSaiNum, _, _, "RTS MONITORING"),
             ChildOf(aibSaiNum, aibParent),
-            Floc(aibParent, 2, s4Parent, _, _).
+            Level2(aibParent, s4Parent, _, _).
         
-        Floc(aibSaiNum, 3, s4Parent + "-CON", "Control", "CON") :- 
+        Level3(aibSaiNum, s4Parent + "-CON", "Control", "CON") :- 
             WorkList(aibSaiNum, _, _, "MPLC CONTROL"),
             ChildOf(aibSaiNum, aibParent),
-            Floc(aibParent, 2, s4Parent, _, _).
+            Level2(aibParent, s4Parent, _, _).
 
-        Floc(aibSaiNum, 3, s4Parent + "-LFT", "Site Lifting", "LFT") :- 
+        Level3(aibSaiNum, s4Parent + "-LFT", "Site Lifting", "LFT") :- 
             WorkList(aibSaiNum, _, _, "LIFTING EQUIPMENT"),
             ChildOf(aibSaiNum, aibParent),
-            Floc(aibParent, 2, s4Parent, _, _).
+            Level2(aibParent, s4Parent, _, _).
 
-        Floc(aibSaiNum, 3, s4Parent + "-STM", "Structure Management", "STM") :- 
+        Level3(aibSaiNum, s4Parent + "-STM", "Structure Management", "STM") :- 
             WorkList(aibSaiNum, _, _, "STRUCTURES + SERVICES"),
             ChildOf(aibSaiNum, aibParent),
-            Floc(aibParent, 2, s4Parent, _, _).
+            Level2(aibParent, s4Parent, _, _).
     }
 
-    def level04(): #{ Floc(String, Int32, String, String, String), 
+    def level04(): #{ Level4(String, String, String, String), 
                         WorkList(String, String, String, String), 
-                        ChildOf(String, String) | r} = #{
+                        ChildOf(String, String), 
+                        Level3(String, String, String, String) | r} = #{
 
-        Floc(aibSaiNum, 4, s4Parent + "-TEL", "Telemetry", "TEL") :- 
+        Level4(aibSaiNum, s4Parent + "-TEL", "Telemetry", "TEL") :- 
             WorkList(aibSaiNum, _, _, "RTS MONITORING"),
-            Floc(aibSaiNum, 3, s4Parent, _, _).
+            Level3(aibSaiNum, s4Parent, _, _).
 
-        Floc(aibSaiNum, 4, s4Parent + "-LOC", "Logic Controllers", "LOC") :- 
+        Level4(aibSaiNum, s4Parent + "-LOC", "Logic Controllers", "LOC") :- 
             WorkList(aibSaiNum, _, _, "MPLC CONTROL"),
-            Floc(aibSaiNum, 3, s4Parent, _, _).
+            Level3(aibSaiNum, s4Parent, _, _).
 
-        Floc(aibSaiNum, 4, s4Parent + "-FLT", "Fixed Lifting", "FLT") :- 
+        Level4(aibSaiNum, s4Parent + "-FLT", "Fixed Lifting", "FLT") :- 
             WorkList(aibSaiNum, _, _, "LIFTING EQUIPMENT"),
-            Floc(aibSaiNum, 3, s4Parent, _, _).
+            Level3(aibSaiNum, s4Parent, _, _).
 
-        Floc(aibSaiNum, 4, s4Parent + "-PLR", "Portable Lifting", "PLR") :- 
+        Level4(aibSaiNum, s4Parent + "-PLR", "Portable Lifting", "PLR") :- 
             WorkList(aibSaiNum, _, _, "LIFTING EQUIPMENT"),
-            Floc(aibSaiNum, 3, s4Parent, _, _).
+            Level3(aibSaiNum, s4Parent, _, _).
         
-        Floc(aibSaiNum, 4, s4Parent + "-BLG", "Buildings", "BLG") :- 
+        Level4(aibSaiNum, s4Parent + "-BLG", "Buildings", "BLG") :- 
             WorkList(aibSaiNum, _, _, "STRUCTURES + SERVICES"),
-            Floc(aibSaiNum, 3, s4Parent, _, _).
+            Level3(aibSaiNum, s4Parent, _, _).
 
     }
 
-    def level05(): #{ Floc(String, Int32, String, String, String), 
-                        WorkList(String, String, String, String) | r} = #{
+    def level05(): #{ Level5(String, String, String, String), 
+                        WorkList(String, String, String, String),
+                        Level4(String, String, String, String) | r} = #{
 
-        Floc(aibSaiNum, 5, s4Parent + "-SYS01", "Fixed Lifting System", "SLFS") :- 
+        Level5(aibSaiNum, s4Parent + "-SYS01", "Fixed Lifting System", "SLFS") :- 
             WorkList(aibSaiNum, _, _, "LIFTING EQUIPMENT"),
-            Floc(aibSaiNum, 4, s4Parent, _, "FLT").
+            Level4(aibSaiNum, s4Parent, _, "FLT").
 
-        Floc(aibSaiNum, 5, s4Parent + "-SYS01", "Portable Lifting System", "SLFS") :- 
+        Level5(aibSaiNum, s4Parent + "-SYS01", "Portable Lifting System", "SLFS") :- 
             WorkList(aibSaiNum, _, _, "LIFTING EQUIPMENT"),
-            Floc(aibSaiNum, 4, s4Parent, _, "PLR").
+            Level4(aibSaiNum, s4Parent, _, "PLR").
 
     }
 }
